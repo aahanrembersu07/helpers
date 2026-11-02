@@ -14,7 +14,6 @@ This file contains conventions for software architecture and code organization
   - The script layer calls the orchestration layer
   - The orchestration layer calls business logic and infrastructure
   - Business logic and infrastructure call only utilities
-- Treat business logic and infrastructure as siblings: neither calls the other
 - Pass data from infrastructure to business logic through function arguments
 - Accept data, not paths, in business logic
   - E.g., `analyze_dataset(df: pd.DataFrame)`, not `analyze_dataset(path: str)`
@@ -119,7 +118,6 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH1.4`: Split Modules by Responsibility
 
-- Group related functions in one module
 - Give each module one responsibility and name it after that responsibility
 - In the helpers library, name modules `h<module>` (e.g., `hdownload.py`)
 - Outside the helpers library, follow the naming of the surrounding project
@@ -308,7 +306,6 @@ This file contains conventions for software architecture and code organization
 ## `ARCH2.4`: Do Not Modify Inputs
 
 - Do not modify an argument in place: return a new object
-- This prevents bugs from shared mutable state
 - Allow an in-place function only when a copy costs too much (e.g., a huge
   `pd.DataFrame`)
   - End its name with `_inplace`
@@ -340,10 +337,10 @@ This file contains conventions for software architecture and code organization
 ## `ARCH3.1`: Split Sequential Processing Into Stages
 
 - Organize processing with 3 or more sequential steps as a pipeline of stages
-- Make each stage:
+- Design each stage to:
   - Have one responsibility
   - Take its input as an argument and return its output
-  - Be idempotent: running it twice is safe and gives the same result
+  - Be idempotent: running it twice gives the same result
   - Depend on other stages only through its input
 - This enables:
   - Testing each stage alone
@@ -474,17 +471,13 @@ This file contains conventions for software architecture and code organization
     - E.g., download every day, report every week
   - The single script is too large to read or test
 - Make the executables communicate only through files on disk
-  - Read the input from a file and write the output to a file
   - Pass the file paths as command line arguments
   - Do not share state between executables through imports or global variables
 - This enables:
   - Re-running one stage without re-running the others
   - Running stages on different machines or containers
   - Inspecting the intermediate results
-- Keep a single script with `hselect_action` when all of these hold:
-  - Stages share the same dependencies
-  - Stages have similar runtimes and run on the same schedule
-  - The script stays small enough to read and test
+- Otherwise keep a single script with `hselect_action`
 - Use `hselect_action` inside an executable for its own internal stages
 - **Bad** (one script mixes stages with different dependencies and schedules)
   ```bash
@@ -509,8 +502,7 @@ This file contains conventions for software architecture and code organization
   - The driver must forward `-v` or `--dry_run` to the executables
   - The driver needs a conditional or a loop, not only a straight sequence
   - The driver has more than 50 lines
-- Keep the executables runnable alone: the driver is a convenience, not a
-  requirement
+- Keep the executables runnable alone
 - Put only sequencing in the driver: no business logic
 - Take one directory as argument and derive every intermediate file path from it
 - Stop at the first failing step
@@ -560,7 +552,6 @@ This file contains conventions for software architecture and code organization
 ## `ARCH4.1`: Validate at the Boundary
 
 - Validate user input and option combinations in `_main()`, right after parsing
-  and before any work starts
 - Use `hdbg.dassert_*` with a message, not `if ... raise`
   - See `.claude/skills/coding.rules.md` `# Error Handling and Assertions`
 - Do not repeat the same check of user input in the inner layers
