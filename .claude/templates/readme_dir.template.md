@@ -1,8 +1,10 @@
 # <Directory Name>
 
-<One-line description of what this directory contains>
-
-<Optional: 2-3 bullet points expanding on the purpose>
+- **Goal**: <What this directory does, in one bullet>
+- **Input**: <What the executables read>
+- **Output**: <What the executables write>
+  - <One sub-bullet per file or per group of files, if there are many>
+- **Users**: <Who uses this directory and for what>
 
 ## Structure of the Dir
 
@@ -18,6 +20,8 @@
   ```
 
 ## Description of Files
+
+- Python and Markdown files, alphabetical by path.
 
 <List all Python and Markdown files in alphabetical order with 1-line
 descriptions (<20 words)>
@@ -36,6 +40,38 @@ descriptions (<20 words)>
 
 # Description of Executables
 
+- There are <N> executables
+  - <How they relate, e.g., they talk to each other only through files>
+
+## Output Dir
+
+<Optional section: add it when the executables write a tree of files in one dir>
+
+- Every executable takes `--output_dir`, and the dir is the only place where files
+  are written
+  - <Who names the files>
+  - <What a rerun skips>
+- A file that a stage writes is named `<pattern>`, where <meaning of each part>
+  ```text
+  <output_dir>/
+      <file_1>
+      <file_2>
+      <subdir>/
+          <file_3>
+  ```
+- The files:
+
+  | File       | Written by          | Content               |
+  | :--------- | :------------------ | :-------------------- |
+  | `<file_1>` | `<script_name.py>`  | <What the file holds> |
+  | `<file_2>` | `<another_tool.sh>` | <What the file holds> |
+
+- Why this layout
+  - <One choice, with the link to its design decision>
+    ([`D<N>`](/<path_from_repo_root>/docs/03-decisions.md#<anchor>))
+- The names are in `<path_from_repo_root>/<names_file.py>`, and the rules are in
+  `<path_to_rules_file>`
+
 ## `<script_name.py>`
 
 ### What It Does
@@ -48,6 +84,7 @@ descriptions (<20 words)>
 ### Examples
 
 <3-5 realistic usage patterns ordered from simple to complex>
+<Use only the args that the tool accepts now>
 
 - <Simple use case: short description>:
   ```bash
@@ -94,7 +131,8 @@ descriptions (<20 words)>
 
 <Optional section describing how tools combine for complex features>
 
-<Use bullet points or prose to describe multi-tool workflows>
+<Use bullet points to describe multi-tool workflows>
+<Use only the args that each tool accepts now>
 
 ## <Workflow Name>
 

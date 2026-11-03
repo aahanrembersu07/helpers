@@ -63,7 +63,7 @@ class Test__resolve_urls(hunitest.TestCase):
         referer = ""
         # Prepare outputs.
         expected_url = (
-            "https://papers.ssrn.com/sol3/Delivery.cfm/5277078.pdf"
+            "https://papers.ssrn.com/sol3/Delivery.cfm"
             "?abstractid=5277078&mirid=1"
         )
         expected_referer = (
