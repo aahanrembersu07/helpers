@@ -471,9 +471,9 @@ Conventions for software architecture and code organization
   ```
 - **Good** (one executable per stage, linked by files on disk)
   ```bash
-  > download_data.py --output_file tmp.raw.csv
-  > train_model.py --input_file tmp.raw.csv --output_file tmp.model.pkl
-  > generate_report.py --input_file tmp.model.pkl --output_file tmp.report.md
+  > download_data.py --output tmp.raw.json
+  > train_model.py --input tmp.raw.json --output tmp.model.pkl
+  > generate_report.py --input tmp.model.pkl --output tmp.report.md
   ```
 
 ## `ARCH3.5`: Sequence Executables with a Driver Script
@@ -500,9 +500,9 @@ Conventions for software architecture and code organization
     `ARCH3.2`
 - **Bad** (the user types each command and repeats the paths by hand)
   ```bash
-  > download_data.py --output_file tmp.raw.csv
-  > train_model.py --input_file tmp.raw.csv --output_file tmp.model.pkl
-  > generate_report.py --input_file tmp.model.pkl --output_file tmp.report.md
+  > download_data.py --output tmp.raw.json
+  > train_model.py --input tmp.raw.json --output tmp.model.pkl
+  > generate_report.py --input tmp.model.pkl --output tmp.report.md
   ```
 - **Good** (a bash driver: one command, paths derived from one directory)
   ```bash
@@ -519,16 +519,101 @@ Conventions for software architecture and code organization
   mkdir -p "$DIR"
 
   # Download the data.
-  download_data.py --output_file "$DIR/raw.csv"
+  download_data.py --output "$DIR/raw.json"
   # Train the model.
-  train_model.py --input_file "$DIR/raw.csv" --output_file "$DIR/model.pkl"
+  train_model.py --input "$DIR/raw.json" --output "$DIR/model.pkl"
   # Generate the report.
-  generate_report.py --input_file "$DIR/model.pkl" --output_file "$DIR/report.md"
+  generate_report.py --input "$DIR/model.pkl" --output "$DIR/report.md"
   ```
 - **Good** (after conversion to Python, a user runs one step alone)
   ```bash
   > run_flow.py --dir tmp.flow
   > run_flow.py --dir tmp.flow --clear_actions --action train_model
+  ```
+
+## `ARCH3.6`: Number the Output Files of Each Executable
+
+- Name each file that an executable writes in the output dir
+  `NN-<stage>.<what>.<ext>`
+  - `NN`: two-digit order of the executable in the pipeline
+  - `<stage>`: name of the stage that writes the file
+  - `<what>`: content of the file
+- Give the stages of one executable the same `NN`, e.g., the stages `rate` and
+  `report` of one script both get `04`
+- Use `00` for the copy of the input of the pipeline
+- Keep the numbers and the names in one module of path getters
+  - Executables and tests call the getters and never repeat a string literal
+- Put the files of one item (e.g., one paper) in a subdir, and name each file after
+  the item with no number
+- This makes a listing of the output dir read in pipeline order, and shows which
+  executable wrote each file
+- Do not hide the files of a stage in a `state/` dir
+  - Keep in a subdir only what is not a result of a stage, e.g., a cache or logs
+- **Bad** (free names, and the issues of a stage in a state dir)
+  ```text
+  papers.csv
+  state/issues.download.json
+  report.csv
+  ```
+- **Good** (the number gives the order, the stage gives the writer)
+  ```text
+  00-paper_list.csv
+  01-resolve.paper_list.json
+  02-download.issues.json
+  04-report.report.csv
+  papers/<BASE>.pdf
+  ```
+
+## `ARCH3.7`: Take `--output_dir` for Several Files and `--output` for One
+
+- Let the user choose where the files go, and let the executable choose the names,
+  per `ARCH3.6`
+- If an executable writes several files, take `--output_dir` only
+- If an executable writes one file, take one of these:
+  - `--output_dir`: the executable infers the file name
+  - `-o/--output`: the user gives the path of the file
+  - Accept exactly one of them with
+    `parser.add_mutually_exclusive_group(required=True)`
+- Read the input of a later executable with `-i/--input`
+  - Default to the file that the executable of the earlier stage wrote in
+    `--output_dir`, so the user does not repeat the path
+- Follow `.claude/skills/script.rules.md` for the flags `-i` and `-o`
+- **Bad** (the user names each file of one executable by hand)
+  ```bash
+  > resolve_papers.py --input list.csv --output papers.csv --issues_output issues.csv
+  > download_papers.py --input papers.csv --output_dir run_1
+  ```
+- **Good** (several files: one dir, the names are inferred, the next stage finds its
+  input)
+  ```bash
+  > resolve_papers.py --input list.csv --output_dir run_1
+  > download_papers.py --output_dir run_1
+  ```
+- **Good** (one file: the user can give the dir or the file)
+  ```bash
+  > make_summary.py --input run_1/01-resolve.paper_list.json --output_dir run_1
+  > make_summary.py --input run_1/01-resolve.paper_list.json --output summary.json
+  ```
+
+## `ARCH3.8`: Use JSON for Intermediate Files
+
+- Write a file that another executable reads as JSON
+  - JSON holds lists and nested data with their types
+  - People and programs both read it
+- Write CSV only for a file that a person opens in a spreadsheet
+  - E.g., the final report, or an input list that the user writes
+- Do not join a list into one cell (e.g., `a|b`)
+  - An item that holds the separator breaks the read
+- Put a `schema_version` key in every JSON file, and check it on read
+  - A file from an old version then fails with a clear message
+- **Bad** (a list in one CSV cell)
+  ```text
+  title,authors
+  Some Title,Smith|Jones
+  ```
+- **Good** (a JSON array)
+  ```json
+  {"schema_version": 1, "title": "Some Title", "authors": ["Smith", "Jones"]}
   ```
 
 # ARCH4: Validation
