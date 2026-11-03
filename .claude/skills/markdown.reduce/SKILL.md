@@ -10,6 +10,7 @@ model: haiku
 - Make the writing clear, concise, and easy to read
 - Avoid unnecessary words and repetition
 - Maintain the exact structure in terms of markdown headers
+- When rewriting a bullet point maintain all the text under 85 characters per line
 - Write the output in the same file
 
 # Verification

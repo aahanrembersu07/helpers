@@ -1,29 +1,27 @@
-This file contains conventions for software architecture and code organization
+Conventions for software architecture and code organization
 
 # ARCH1: Layers and Dependencies
 
 ## `ARCH1.1`: Organize Code in Layers
 
-- Split code into layers, each with one responsibility:
-  - **Script layer**: parse CLI arguments (`_parse()`)
-  - **Orchestration layer**: call the other layers in order (`_main()`)
-  - **Business logic layer**: algorithms and data transformations, no I/O
-  - **Infrastructure layer**: file I/O, system calls, databases, external APIs
-  - **Utilities layer**: generic helpers and data structures
-- Point dependencies in one direction only:
-  - The script layer calls the orchestration layer
-  - The orchestration layer calls business logic and infrastructure
+- Split code into layers. Each layer has one responsibility:
+  - **Script**: parse CLI arguments (`_parse()`)
+  - **Orchestration**: call the other layers in order (`_main()`)
+  - **Business logic**: algorithms and data transformations, no I/O
+  - **Infrastructure**: file I/O, system calls, databases, external APIs
+  - **Utilities**: generic helpers and data structures
+- Point dependencies one way:
+  - Script calls orchestration
+  - Orchestration calls business logic and infrastructure
   - Business logic and infrastructure call only utilities
-- Pass data from infrastructure to business logic through function arguments
-- Accept data, not paths, in business logic
-  - E.g., `analyze_dataset(df: pd.DataFrame)`, not `analyze_dataset(path: str)`
-- This enables:
-  - Testing business logic without I/O
-  - Swapping a data source or file format
-  - Reusing business logic in a different script
-- Test business logic with plain inputs and test infrastructure with real files
+- Pass data from infrastructure to business logic through arguments
+- Business logic accepts data, not paths: `analyze_dataset(df: pd.DataFrame)`, not
+  `analyze_dataset(path: str)`
+- This enables testing business logic without I/O, swapping data sources or formats,
+  and reusing logic in other scripts
+- Test business logic with plain inputs. Test infrastructure with real files
   - See `.claude/skills/testing.rules.md`
-- **Bad** (file I/O and printing are mixed with the computation)
+- **Bad** (I/O and printing mixed with computation)
   ```python
   def process_data(input_file: str) -> None:
       with open(input_file) as f:
@@ -31,7 +29,7 @@ This file contains conventions for software architecture and code organization
       result = complex_calculation(data)
       print(result)
   ```
-- **Good** (one function per layer, `_main()` calls them in order)
+- **Good** (one function per layer; `_main()` calls them in order)
   ```python
   def _read_input(input_file: str) -> Dict[str, Any]:
       """
@@ -68,17 +66,17 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH1.2`: Keep Interfaces Between Layers Minimal
 
-- Pass only the data that the callee needs, not a whole context object
-- Do not add callbacks from an inner layer to an outer layer
-- Do not add bidirectional dependencies between two layers
-- **Bad** (the callee depends on the structure of `context` and changes it)
+- Pass only the data the callee needs, not a context object
+- No callbacks from an inner layer to an outer layer
+- No bidirectional dependencies between layers
+- **Bad** (the callee depends on and mutates `context`)
   ```python
   def process(context: Any) -> None:
       context.data = transform(context.data)
       context.log(f"Processed {context.count} items")
       context.state = "done"
   ```
-- **Good** (the callee gets one input and returns one output)
+- **Good** (one input, one output)
   ```python
   def process(data: pd.DataFrame) -> pd.DataFrame:
       """
@@ -93,13 +91,12 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH1.3`: Enforce Dependency Direction
 
-- Do not create import cycles between modules
-- Do not import a module of a higher layer from a module of a lower layer
-- Put types shared by several modules (dataclasses, enums, constants) in one leaf
-  module that imports no other module of the project
-- Check the direction with a unit test that parses the imports of every module
-  and fails on a forbidden import
-- **Bad** (`report.py` imports `pipeline.py`, which already imports `report.py`)
+- No import cycles between modules
+- Do not import a higher-layer module from a lower-layer module
+- Put types shared by several modules (dataclasses, enums, constants) in a leaf
+  module that imports no project module
+- A unit test parses the imports of every module and fails on a forbidden import
+- **Bad** (`report.py` imports `pipeline.py`, which imports `report.py`)
   ```python
   # report.py
   import pipeline
@@ -118,9 +115,9 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH1.4`: Split Modules by Responsibility
 
-- Give each module one responsibility and name it after that responsibility
-- In the helpers library, name modules `h<module>` (e.g., `hdownload.py`)
-- Outside the helpers library, follow the naming of the surrounding project
+- Give each module one responsibility. Name it after that responsibility
+- In helpers, name modules `h<module>` (e.g., `hdownload.py`). Elsewhere, follow the
+  project's naming
 - **Bad** (unrelated functions in one module)
   ```python
   # hutils.py
@@ -152,12 +149,10 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH2.1`: Pass Data Through Arguments and Return Values
 
-- Make every data dependency explicit in the function signature
-- Use type hints to show what data flows between functions
-- Document the expected format in the docstring
-  - E.g., the required columns of a `pd.DataFrame`
-- Never use a global variable to pass data between functions
-- **Bad** (stages share hidden state, so `stage2()` works only after `stage1()`)
+- Make every data dependency explicit in the signature. Use type hints
+- Document the expected format in the docstring (e.g., required DataFrame columns)
+- Never pass data between functions through globals
+- **Bad** (hidden global state: `stage2()` needs `stage1()` to run first)
   ```python
   _data: Optional[pd.DataFrame] = None
 
@@ -199,13 +194,13 @@ This file contains conventions for software architecture and code organization
 
 - Use a config dataclass when a function has more than 3 parameters that tune its
   behavior
-- Keep the required inputs in the signature and move the options to the config
-- Make config fields required, unless the rule
-  `## Use Default Values Rarely and Force Keyword-Only Via `*`` in
-  `.claude/skills/coding.rules.md` allows a default
-- Declare in the config WHAT to do, and implement HOW in the code
-  - Do not store expressions or code in config values
-- **Bad** (too many options in the signature, even if keyword-only)
+- Keep required inputs in the signature. Move options to the config
+- Make config fields required, unless
+  `## Use Default Values Rarely and Force Keyword-Only Via `\*``in`.claude/skills/coding.rules.md`
+  allows a default
+- The config states WHAT to do. The code implements HOW. Do not store expressions or
+  code in config values
+- **Bad** (too many keyword-only options in the signature)
   ```python
   def transform(
       data: pd.DataFrame,
@@ -218,7 +213,7 @@ This file contains conventions for software architecture and code organization
   ) -> pd.DataFrame:
       ...
   ```
-- **Good** (the config groups the related options)
+- **Good** (the config groups related options)
   ```python
   @dataclass
   class TransformConfig:
@@ -239,7 +234,7 @@ This file contains conventions for software architecture and code organization
   ```python
   config = {"transform": "if value > 0 then log(value) else 0"}
   ```
-- **Good** (the config declares the intent and the code implements it)
+- **Good** (the config declares intent, the code implements it)
   ```python
   @dataclass
   class Config:
@@ -252,10 +247,9 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH2.3`: Return and Pass Dataclasses, Not Tuples
 
-- Return a dataclass or a `NamedTuple` when a function returns 3 or more values,
-  or values with different meanings
-- Allow a plain tuple only for a pair of values of the same kind
-  - E.g., `(train_df, test_df)`
+- Return a dataclass or `NamedTuple` for 3 or more values, or for values with
+  different meanings
+- Use a plain tuple only for a pair of same-kind values, e.g., `(train_df, test_df)`
 - Group inputs that always travel together in one dataclass
 - **Bad** (the order of the 4 returned values is implicit)
   ```python
@@ -305,12 +299,12 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH2.4`: Do Not Modify Inputs
 
-- Do not modify an argument in place: return a new object
-- Allow an in-place function only when a copy costs too much (e.g., a huge
+- Do not modify an argument in place. Return a new object
+- Allow in-place functions only when a copy costs too much (e.g., a huge
   `pd.DataFrame`)
-  - End its name with `_inplace`
-  - State in the docstring that it modifies the input
-- **Bad** (the function changes the caller's DataFrame)
+  - Name them with the suffix `_inplace`
+  - State in the docstring that they modify the input
+- **Bad** (changes the caller's DataFrame)
   ```python
   def normalize(df: pd.DataFrame) -> pd.DataFrame:
       """
@@ -320,7 +314,7 @@ This file contains conventions for software architecture and code organization
       df["value"] = (value - value.mean()) / value.std()
       return df
   ```
-- **Good** (the function returns a normalized copy)
+- **Good** (returns a normalized copy)
   ```python
   def normalize(df: pd.DataFrame) -> pd.DataFrame:
       """
@@ -336,18 +330,16 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH3.1`: Split Sequential Processing Into Stages
 
-- Organize processing with 3 or more sequential steps as a pipeline of stages
+- Use a pipeline of stages for 3 or more sequential steps
 - Design each stage to:
   - Have one responsibility
   - Take its input as an argument and return its output
   - Be idempotent: running it twice gives the same result
   - Depend on other stages only through its input
-- This enables:
-  - Testing each stage alone
-  - Adding, removing, or reordering stages
-- Pass data by return value only when all the stages always run together
-  - When users can select stages, see `ARCH3.3`
-- **Bad** (one function mixes all the stages)
+- This enables testing each stage alone and adding, removing, or reordering stages
+- Pass data by return value only when all stages always run together. For selectable
+  stages, see `ARCH3.3`
+- **Bad** (one function mixes all stages)
   ```python
   def run() -> None:
       data = fetch_from_api()
@@ -355,7 +347,7 @@ This file contains conventions for software architecture and code organization
       save_to_storage(data)
       remove_temp_files()
   ```
-- **Good** (one function per stage, the orchestration passes the data)
+- **Good** (one function per stage; the orchestration passes the data)
   ```python
   def _download() -> pd.DataFrame:
       """
@@ -384,17 +376,17 @@ This file contains conventions for software architecture and code organization
   _upload(data)
   ```
 
-## `ARCH3.2`: Select Stages With hselect_action
+## `ARCH3.2`: Select Stages with Hselect_action
 
-- Use `helpers.hselect_action` so that users can run a subset of the stages
-  - The flags are `--action`, `--skip_action`, `--all_actions`, `--clear_actions`
+- Use `helpers.hselect_action` so users can run a subset of stages
+  - Flags: `--action`, `--skip_action`, `--all_actions`, `--clear_actions`
   - See `.claude/skills/script.rules.md` `### Action Selection`
 - Define each action as a private function `_<action_name>()`
   - E.g., the action `"download"` runs `_download()`
-- Define `_VALID_ACTIONS` (every stage) and `_DEFAULT_ACTIONS` (stages that run
-  by default) at the top of the script
-- List the valid actions in the order they run, and document that order
-- Register the actions in `_parse()` and run them in `_main()`
+- Define `_VALID_ACTIONS` (all stages) and `_DEFAULT_ACTIONS` (stages that run by
+  default) at the top of the script
+- List valid actions in run order, and document that order
+- Register actions in `_parse()` and run them in `_main()`
 - **Bad** (no way to skip or select a stage)
   ```python
   def _main(parser: argparse.ArgumentParser) -> None:
@@ -440,11 +432,11 @@ This file contains conventions for software architecture and code organization
 
 ## `ARCH3.3`: Pass Data Between Selectable Stages Through Files
 
-- Assume that a user can skip any stage that `hselect_action` makes selectable
+- Assume users can skip any stage that `hselect_action` makes selectable
 - Do not rely on the return value of another stage
-- Make each stage read its input from a file and write its output to a file
-  - Take the file paths from the CLI arguments
-- This enables running one stage alone on the output of an earlier run
+- Each stage reads its input from a file and writes its output to a file. Take the
+  paths from CLI arguments
+- This lets you run one stage alone on the output of an earlier run
 - **Bad** (`--skip_action download` leaves `data` undefined)
   ```python
   if action == "download":
@@ -452,7 +444,7 @@ This file contains conventions for software architecture and code organization
   elif action == "process":
       data = _process(data)
   ```
-- **Good** (each stage reads and writes a file, so any stage runs alone)
+- **Good** (each stage reads and writes files, so any stage runs alone)
   ```python
   if action == "download":
       _download(args.raw_file)
@@ -463,22 +455,16 @@ This file contains conventions for software architecture and code organization
 ## `ARCH3.4`: Split a Pipeline Into Executables
 
 - Split a pipeline into one executable per stage when any of these holds:
-  - Stages have different dependencies
-    - E.g., one stage needs a GPU, another needs only `pandas`
-  - Stages have different runtimes
-    - E.g., one stage takes hours, another takes seconds
-  - Stages run on different schedules
-    - E.g., download every day, report every week
-  - The single script is too large to read or test
-- Make the executables communicate only through files on disk
-  - Pass the file paths as command line arguments
-  - Do not share state between executables through imports or global variables
-- This enables:
-  - Re-running one stage without re-running the others
-  - Running stages on different machines or containers
-  - Inspecting the intermediate results
-- Otherwise keep a single script with `hselect_action`
-- Use `hselect_action` inside an executable for its own internal stages
+  - Stages have different dependencies (e.g., one needs a GPU, another only `pandas`)
+  - Stages have different runtimes (e.g., one takes hours, another seconds)
+  - Stages run on different schedules (e.g., daily download, weekly report)
+  - The script is too large to read or test
+- Executables communicate only through files on disk. Pass paths as CLI arguments. Do
+  not share state through imports or globals
+- This enables re-running one stage, running stages on different machines or
+  containers, and inspecting intermediate results
+- Otherwise keep one script with `hselect_action`. Inside an executable, use
+  `hselect_action` for its internal stages
 - **Bad** (one script mixes stages with different dependencies and schedules)
   ```bash
   > run_pipeline.py --all_actions
@@ -490,30 +476,28 @@ This file contains conventions for software architecture and code organization
   > generate_report.py --input_file tmp.model.pkl --output_file tmp.report.md
   ```
 
-## `ARCH3.5`: Sequence Executables With a Driver Script
+## `ARCH3.5`: Sequence Executables with a Driver Script
 
 - Write a driver script when users run the same 3 or more executables in the same
   order
-- Write the driver in bash first: `run_<flow>.sh`
-  - Follow `.claude/skills/bash.rules.md`
+- Write the driver in bash first: `run_<flow>.sh`. Follow
+  `.claude/skills/bash.rules.md`
 - Convert the driver to Python (`run_<flow>.py`) when any of these holds:
-  - Users need to run only some of the steps through the driver
+  - Users need to run only some steps through the driver
   - The driver needs an option other than the directory
-  - The driver must forward `-v` or `--dry_run` to the executables
-  - The driver needs a conditional or a loop, not only a straight sequence
-  - The driver has more than 50 lines
+  - The driver must forward `-v` or `--dry_run`
+  - The driver needs a conditional or loop, not only a straight sequence
+  - The driver exceeds 50 lines
 - Keep the executables runnable alone
-- Put only sequencing in the driver: no business logic
-- Take one directory as argument and derive every intermediate file path from it
-- Stop at the first failing step
-  - E.g., `set -e` in bash
-- In the Python driver:
+- The driver holds only sequencing, no business logic
+- Take one directory as argument. Derive every intermediate file path from it
+- Stop at the first failing step (e.g., `set -e` in bash)
+- In a Python driver:
   - Call each executable with `hsystem.system()`
-  - Forward `-v` and `--dry_run` to each executable
-    - See `# Standard Argument Helpers` and `# Dry Run` in
-      `.claude/skills/script.rules.md`
-  - Use `hselect_action` with one action per executable, named after it
-    - See `ARCH3.2`
+  - Forward `-v` and `--dry_run`. See `# Standard Argument Helpers` and `# Dry Run`
+    in `.claude/skills/script.rules.md`
+  - Use `hselect_action` with one action per executable, named after it. See
+    `ARCH3.2`
 - **Bad** (the user types each command and repeats the paths by hand)
   ```bash
   > download_data.py --output_file tmp.raw.csv
@@ -552,9 +536,9 @@ This file contains conventions for software architecture and code organization
 ## `ARCH4.1`: Validate at the Boundary
 
 - Validate user input and option combinations in `_main()`, right after parsing
-- Use `hdbg.dassert_*` with a message, not `if ... raise`
-  - See `.claude/skills/coding.rules.md` `# Error Handling and Assertions`
-- Do not repeat the same check of user input in the inner layers
+- Use `hdbg.dassert_*` with a message, not `if ... raise`. See
+  `.claude/skills/coding.rules.md` `# Error Handling and Assertions`
+- Do not repeat input checks in inner layers
 - Keep a cheap `dassert` in an inner layer only for an invariant that, if broken,
   gives a wrong result without an error
 - **Bad** (the same check in every layer)
@@ -576,7 +560,7 @@ This file contains conventions for software architecture and code organization
           "--format is required when --output_dir is specified",
       )
   ```
-- **Good** (`_main()` validates once and the inner layers trust the input)
+- **Good** (`_main()` validates once; the inner layers trust the input)
   ```python
   def _main(parser: argparse.ArgumentParser) -> None:
       """
