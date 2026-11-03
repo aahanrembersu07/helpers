@@ -616,6 +616,56 @@ Conventions for software architecture and code organization
   {"schema_version": 1, "title": "Some Title", "authors": ["Smith", "Jones"]}
   ```
 
+## `ARCH3.9`: End Each Stage with a Summary of Its Output
+
+- End each stage with a summary of what it did
+  - The user then does not read the whole log or list the output dir to know
+- The summary answers three questions:
+  - What output files did the stage generate?
+    - List the path of every output file, e.g., both the results file and the issues
+      file
+    - Give the number of files written in the run if the stage writes one file per
+      unit
+  - How many units did the stage process?
+    - A unit is the item that the stage loops over, e.g., a record, a paper, or an
+      input line
+    - Give the units in the input, the units skipped, and the units processed in the
+      run
+  - How many units did it complete successfully?
+    - Give the units that completed and the units that failed
+    - Point to the file that says why each unit failed
+- Put each unit in exactly one group, so that the groups add up to the units in the
+  input:
+  - Skipped: done in an earlier run, or an earlier stage failed for the unit
+  - Completed successfully
+  - Failed
+- Write the same text to the log and to the file `NN-<stage>.summary.txt` in the
+  output dir, per `ARCH3.6`
+  - Write the file also when no unit fails, so the user knows that the stage ended
+  - Overwrite it at each run, so it describes the last run
+- In a dry run, log what the stage would process and write no file
+- Build the text in one function from a dataclass of counts, per `ARCH2.3`
+  - Each stage fills the dataclass in its own loop, and one test checks the format of
+    all the stages
+- **Bad** (one count of failures: no files, no skipped units, no processed units)
+  ```text
+  Download: 2 of 20 papers failed
+  ```
+- **Good** (the three answers, and a rerun shows the units that it skipped)
+  ```text
+  Stage `download` summary
+    Papers in input:        20
+    Skipped, done before:   12
+    Processed in this run:   8
+    Completed successfully:  6
+    Failed:                  2
+    Output files written in this run:
+      'run_1/papers/<BASE>.pdf': 6 files
+      'run_1/papers/<BASE>.md': 6 files
+    Issues file: 'run_1/02-download.issues.json' (2 issues)
+    Summary file: 'run_1/02-download.summary.txt'
+  ```
+
 # ARCH4: Validation
 
 ## `ARCH4.1`: Validate at the Boundary
