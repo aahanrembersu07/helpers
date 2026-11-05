@@ -6,8 +6,7 @@ model: haiku
 # Goal
 
 - Change text with recognizable AI mannerisms (hedging, dramatic pivots, cliched
-  transitions) and clean up AI-written content that's factually correct but tonally
-  flat
+  transitions). Clean up AI-written content that is factually correct but flat
 
 # What This Skill Preserves
 - Author's opinions, arguments, and claims
@@ -19,14 +18,14 @@ model: haiku
 # Workflow
 
 ## Core Principles
-- Edit, don't rewrite: clean up pattern slop, preserve voice, opinions,
-  structure, and meaning
-- Apply systematically: check all 19 rules below; skip only if the rule doesn't
-  apply to the text
-- Use judgment on conflicts: if a rule break serves the writing (e.g., a
+- Edit, don't rewrite. Clean up pattern slop, keep the voice, opinions, structure,
+  and meaning
+- Apply systematically: check all 19 rules below. Skip a rule only if it does not
+  apply
+- Use judgment on conflicts. If breaking a rule serves the writing (e.g., a
   well-placed em dash for effect), keep it
-- Change nothing else: don't reorder paragraphs, add ideas, rephrase core
-  arguments, or alter facts
+- Change nothing else: no reordered paragraphs, added ideas, rephrased core
+  arguments, or altered facts
 
 ## Pattern Checklist
 Scan for these AI markers before applying detailed rules:
@@ -65,12 +64,12 @@ Scan for these AI markers before applying detailed rules:
 
 ### Rule 1: Em Dashes
 - Remove excessive em dashes (—)
-- Rewrite using commas, full stops, or restructure the sentence
-- One or two in a long piece is fine; three or more is a pattern worth fixing
+- Rewrite with commas, full stops, or a restructured sentence
+- One or two in a long piece is fine. Three or more is a pattern worth fixing
 
 ### Rule 2: Corrective Antithesis
-- Remove "Not X. But Y." constructions where you set up something the reader
-  never assumed, then correct it for drama
+- Remove "Not X. But Y." constructions that set up something the reader never
+  assumed, then correct it for drama
 - **Bad**: "This isn't because they don't trust the technology. It's because they
   can't predict it."
 - **Good**: "They trust the technology fine. What they can't do is predict it."
@@ -78,17 +77,15 @@ Scan for these AI markers before applying detailed rules:
 ### Rule 3: Dramatic Pivot Phrases
 - Remove theatrical pivots: "But here's the thing", "Here's the catch", "Here's
   the bind", "Here's what most people miss"
-- Fold the point into the sentence naturally
+- Fold the point into the sentence
 - **Bad**: "The patterns are valuable. But here's the bind: building a tool cost
   more than most could justify."
 - **Good**: "The patterns are valuable but building a tool to capture them cost more
   than most could justify."
 
 ### Rule 4: Soft Hedging Language
-- Cut filler hedges; just say the thing
-- Remove: "It's worth noting that", "Something we've observed", "This is where X
-  really shines", "It's important to remember", "It should be noted",
-  "Interestingly enough"
+- Cut filler hedges. Just say the thing
+- Remove the filler hedges listed in `## Pattern Checklist` (Filler and Hedges)
 - **Bad**: "It's worth noting that this approach has shown some promising results in
   certain contexts."
 - **Good**: "This approach works."
@@ -123,7 +120,7 @@ Scan for these AI markers before applying detailed rules:
 - **Good**: "Clear communication matters here."
 
 ### Rule 8: Passive Voice Clusters
-- Flag sequences of two or more passive constructions in a row
+- Flag two or more passive constructions in a row
 - Rewrite at least one in active voice to restore momentum
 - **Bad**: "The report was reviewed by the team. Errors were identified. Changes
   were recommended."
@@ -132,14 +129,14 @@ Scan for these AI markers before applying detailed rules:
 ### Rule 9: Rhetorical Section Openers
 - Cut rhetorical questions used as transitions ("So what does this mean for
   you?", "Why does this matter?")
-- State the answer directly or remove entirely
+- State the answer directly, or remove it
 - **Bad**: "So what does this mean for your team? It means you need to rethink your
   process."
 - **Good**: "Your team needs to rethink its process."
 
 ### Rule 10: Staccato Rhythm
 - Break up runs of short, punchy sentences that stack without variation
-- Combine some; lengthen others
+- Combine some. Lengthen others
 - Let rhythm follow the thinking, not a drumbeat
 - **Bad**: "Now, agents act. They send emails. They modify code. They book
   appointments."
@@ -148,15 +145,13 @@ Scan for these AI markers before applying detailed rules:
   happened."
 
 ### Rule 11: Cookie-Cutter Paragraphs
-- Vary paragraph length
-- If every paragraph is 3-4 sentences, break some into one-liners and let others
-  stretch
-- The shape on the page should look uneven, like real thinking
+- Vary paragraph length. If every paragraph runs 3-4 sentences, split some and
+  stretch others
+- The page should look uneven, like real thinking
 
 ### Rule 12: Gift-Wrapped Endings
 - Remove summary conclusions that restate the article's points
-- **Cut**: "In summary", "In conclusion", "Ultimately", "Moving forward", "At the
-  end of the day"
+- **Cut** the closers listed in `## Pattern Checklist` (Gift-wrapped endings)
 - End with something specific, human, or unresolved
 - **Bad**: "In summary, by focusing on clear communication, consistent feedback, and
   mutual trust, teams can build stronger relationships."
@@ -164,16 +159,15 @@ Scan for these AI markers before applying detailed rules:
   it."
 
 ### Rule 13: Throat-Clearing Intros
-- Remove: "Let's explore", "Let's unpack", "Let's dive in", "Let's break it
-  down", "In this article, we'll"
-- Just start; the best first sentence puts the reader in the middle of something
+- Remove throat-clearing openers such as "Let's explore", "Let's dive in", and
+  "In this article, we'll"
+- Just start. The best first sentence puts the reader in the middle of something
 - **Bad**: "In this article, we'll explore the hidden costs of micromanagement
   Let's dive in."
 - **Good**: "I micromanaged someone last Tuesday."
 
 ### Rule 14: Exhaustive Lists
-- Trim bullet lists that run to 7-10 items when 3-4 would cover the essential
-  points
+- Trim bullet lists of 7-10 items to the 3-4 that cover the essential points
 - Long lists signal AI comprehensiveness, not human judgment
 - Cut the weakest items
 
@@ -194,7 +188,7 @@ Scan for these AI markers before applying detailed rules:
   let it drain and suddenly every interaction needs a charger."
 
 ### Rule 17: Overexplaining the Obvious
-- Cut sentences that explain things the reader already understands
+- Cut sentences that explain what the reader already understands
 - If you've made a clear point, don't re-explain how it works
 - **Bad**: "Trust is earned over time. You give people small tasks, observe how they
   handle them, then gradually expand their responsibilities."
@@ -203,8 +197,7 @@ Scan for these AI markers before applying detailed rules:
 
 ### Rule 18: Generic Examples
 - Flag examples that could apply to any company or product
-- If an example doesn't contain a specific, surprising, or insider detail, it's
-  filler
+- An example without a specific, surprising, or insider detail is filler
 - Either sharpen it or cut it
 - **Bad**: "Take Slack, for example. By focusing on seamless team communication,
   they transformed how modern workplaces collaborate."
@@ -219,8 +212,7 @@ Scan for these AI markers before applying detailed rules:
 - If you can't name the source, cut the claim
 
 ## Save
-- Save the cleaned up text on top of the input file, without changing the format
-  but only the text
+- Save the cleaned text over the input file. Change only the text, not the format
 
 # Verification
 - [ ] Confirm the file's structure, order, and meaning are unchanged

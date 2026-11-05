@@ -50,8 +50,6 @@ model: haiku
     of x_j across all samples`
   - **Good** (wrapped in math mode): `Randomly permute the values of $x_j$
     across all samples`
-  - **Bad** (unwrapped function notation): `Compute f(x) and g(x)`
-  - **Good** (wrapped in math mode): `Compute $f(x)$ and $g(x)$`
 
 ## Unicode to LaTeX
 - Replace unicode math characters with LaTeX:

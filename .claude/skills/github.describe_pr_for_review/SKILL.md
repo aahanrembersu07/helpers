@@ -16,8 +16,7 @@ model: sonnet
 
 - Take the PR links from the arguments, e.g.,
   `https://github.com/<OWNER>/<REPO>/pull/<PR_NUM>`
-  - The arguments are one PR or a list of PRs
-  - Separate the items by spaces, commas, or newlines
+  - Arguments are one PR or a list, separated by spaces, commas, or newlines
   - Keep the order given and drop duplicates
 - If only `<PR_NUM>` or `#<PR_NUM>` is given, use the repo of the current Git client:
   ```bash
@@ -47,7 +46,7 @@ model: sonnet
   - `closingIssuesReferences` from the metadata
   - The issue number next to a keyword in the PR body: `Closes`, `Fixes`, `Resolves`,
     `Related to`, `Part of`, or a full issue URL
-    - Ignore the other `#<NUM>` in the body, they are often sibling PRs in a stack
+    - Ignore other `#<NUM>` refs in the body, often sibling PRs in a stack
   - The `Task<NUM>` token in the head branch name
     - E.g., `UmdTask640_Noesis_PR_S4_spec` gives `640`
   - If nothing matches, write `none` for both `Issue` and `Issue link`
@@ -104,7 +103,7 @@ model: sonnet
   - Otherwise, if any check is not completed: `CI pending`
   - Otherwise, if there are no checks: `no CI checks`
   - Otherwise: `CI passed`
-- Shorten a check name longer than 40 characters to the tool or job identifier in it
+- Shorten a check name over 40 characters to its tool or job identifier
   - E.g., `Run pytest_log on class content dirs` becomes `pytest_log`
 
 ## Write the Short Description
@@ -138,8 +137,7 @@ model: sonnet
 
 - Write `<SCORE>/5, <REASON>`, with a whole number from 1 to 5
   - 1 is simple to review, 5 is difficult to review
-- The score measures the effort to review the PR, not the quality of the PR
-  - A big PR of high quality can still score 5
+- Measures review effort, not PR quality: a big, high-quality PR can still score 5
 - Start from the size, then adjust by at most 1 point for the nature of the change
   - Do not count generated files, lock files, and golden test outcomes in the size
 - Use this scale:
@@ -169,8 +167,8 @@ model: sonnet
 
 - Write `<SCORE>/5, <REASON>`, with a whole number from 1 to 5
   - 1 is low quality, 5 is high quality
-- Derive the score from the 3 bullets of `Assessment of quality` and from `Status`
-  - Do not add new findings in the score
+- Derive the score from the 3 `Assessment of quality` bullets and `Status`
+  - Add no new findings to the score
 - Use this scale:
   - **5**: one purpose, code has tests, docs match the code, CI passed, no rule
     violations

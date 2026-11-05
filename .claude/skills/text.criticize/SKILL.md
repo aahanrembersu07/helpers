@@ -16,7 +16,6 @@ model: opus
 - Read the text passed by the user carefully
 
 ## Identify and Rank Mistakes
-- Identify mistakes in the passed text
 
 ### Definition
 - Criteria for mistakes:

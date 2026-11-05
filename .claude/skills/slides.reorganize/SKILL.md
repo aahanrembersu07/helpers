@@ -4,9 +4,8 @@ model: sonnet
 ---
 
 # Goal
-- Given a markdown file `<FILE>` with slides about technical material propose how to
-  reorganize the slides without removing any content, but only moving / reorganizing
-  the content
+- Given a markdown file `<FILE>` with slides about technical material, propose how
+  to reorganize the slides without removing any content, only moving them
 
 # Workflow
 - Read the conventions in `.claude/skills/slides.rules.md`
@@ -18,16 +17,15 @@ model: sonnet
   ```
 
 ## Propose Reorganization
-- Propose how to organize the slides in a different flow, separating cohesive chunks
-  with:
+- Propose a new flow for the slides, separating cohesive chunks with:
   - level 1 `# ...`
   - level 2 headers `## ...`
   - slides `* ...`
-- Keep the standalone `* Roadmap` slide first and the standalone `* Summary`
-  slide last (right before `* References`, if present): never propose moving
-  either one, per `.claude/skills/slides.rules.md` `## Roadmap Slide` /
-  `## Summary Slide`. Do update `* Roadmap`'s bullets if the reorganization
-  changes the order of the `#` topics it previews
+- Keep the standalone `* Roadmap` slide first and the standalone `* Summary` slide
+  last (right before `* References`, if present). Never move either one, per
+  `.claude/skills/slides.rules.md` `## Roadmap Slide` / `## Summary Slide`. Update
+  `* Roadmap`'s bullets if the reorganization changes the order of the `#` topics
+  it previews
 
 - E.g.,
   ```markdown
@@ -62,8 +60,8 @@ model: sonnet
 ## Perform Reorganization
 
 - Wait for the user to approve the changes
-- After the user approves, perform the changes in place reorganizing the slides,
-  but without removing any slide or content
+- After approval, reorganize the slides in place, without removing any slide or
+  content
 
 # Verification
 - [ ] Make sure that the updated slides render correctly, e.g.,
