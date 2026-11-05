@@ -7,20 +7,33 @@ model: sonnet
 
 - Given a dir, write a markdown file with checkboxes that guides a human to read and
   understand the code, the documentation, and the tests of that dir
-- Split the checklist in levels, from "Understand the code in 10 mins" to
-  "Understand the code in full"
+- Split the checklist in exactly three levels:
+  - Level 1: "Understand in 15 mins"
+  - Level 2: "Understand in 1 hour"
+  - Level 3: "Understand in full"
+  - Do not add a fourth level, and do not rename a level
   - Each level adds items to the levels before it
   - A reader can stop after any level and still know the dir at that depth
+- Give the time of every item, so that the reader can plan the work
+- Include examples and tests to run, so that the reader sees how the code behaves
+- Include one end-to-end demo run in Level 3, with an explanation of what each
+  output file is
+- Take the files, their kinds, the time to read each one, and the order of the code
+  from the section `# Review roadmap` of the `README.md` of the dir
+  - The skill `.claude/skills/readme_dir.create/SKILL.md` writes this section
+  - The checklist does not repeat the map or the table of the files
 
 # Conventions
 
 - Write the checklist following the template
   `.claude/templates/coding_review_code_dir.template.md`
+  - The template has no `# Map of the Dir`: the map is in the README
 - Write the text following `.claude/skills/text.rules.md` and
   `.claude/skills/markdown.rules.md`
-  - Use `- [ ]` for every checkbox, never a bare `[ ]`
+  - Use `- [ ]` for every checkbox in a list, never a bare `[ ]`
 - Refer to the Python rules in `.claude/skills/coding.rules.md` and to the test rules
-  in `.claude/skills/testing.rules.md` in the items of Level 4
+  in `.claude/skills/testing.rules.md` in the items of Level 3
+- Take the way to run the tests from the subsection `## Testing` of the roadmap
 
 # Workflow
 
@@ -38,187 +51,291 @@ model: sonnet
   - This follows the convention in `.claude/skills/skill.rules.md`
     `## Generated File Naming`
   - If the file exists, overwrite it after reading it, and keep the items that are
-    already ticked `- [x]` when the same item is still in the new checklist
+    already ticked when the same item is still in the new checklist
+- Take the `README.md` of the dir
+  - If it does not exist, or it has no section `# Review roadmap`, report the error
+    and stop
+  - Tell the user to run `.claude/skills/readme_dir.create/SKILL.md` on the dir first
 
-## Take the Inventory
+## Read the Roadmap
 
-- List the tracked and the untracked files of the dir, without the ignored files:
+- Read the section `# Review roadmap` of `<DIR>/README.md`
+- From the bullets of the section take:
+  - The entry points, in run order
+  - The layers, bottom first, and the cycles in the import graph
+  - The command to run the tests, in the dev env and in Docker
+  - The reading speeds, in lines per min
+  - The "Skipped" line, and the other notes on the table
+- From the table take, for each file: the kind, the lines, the `Mins`, the `Changed`
+  flag, its doc, and its test
+  - The order of the `code` rows is the bottom up order of the import graph
+  - A raw export has no time: give it no read item
+  - A Level 3 item may list the header of a raw export
+- Check that the roadmap is current:
   ```bash
   > git ls-files --cached --others --exclude-standard <DIR>
+  > wc -l <FILES>
   ```
-- Count the lines of every file with `wc -l`
-- Mark the files that have uncommitted changes:
+  - If a file is missing from the table, or a `Lines` value differs, report it and
+    stop
+  - Tell the user to run `.claude/skills/readme_dir.create/SKILL.md` on the dir again
+- Mark the files that have uncommitted changes, since the `Changed` flag goes stale
+  first:
   ```bash
   > git status --short <DIR>
   ```
-- Skip, and list in the "Skipped" line with the reason:
-  - Logs: `*.log`
-  - Scratch files: `tmp.*`
-  - Caches: `__pycache__/`, `.ruff_cache/`, `.pytest_cache/`
-  - Symlinks
-  - Generated or big data files, e.g., a CSV over 1000 lines
-    - Keep them in the table, but do not add an item to read them in full
-    - A Level 4 item may list the header of the file
 
-## Classify the Files
+## Set the Reading Time
 
-- Put each file in exactly one kind:
-  - `doc`: `README.md`, `*.README.md`, files under `docs/`, `log.md`, `todos.md`
-  - `test`: files under `test/` or named `test_*.py`
-  - `code`: all the other `*.py` and `*.sh` files
-  - `data`: prompts, YAML, CSV, JSON, and other inputs read by the code
-- Find the entry points
-  - A file is an entry point if it is executable, or has `_main` and
-    `if __name__ == "__main__"`
-- Pair each `code` file with:
-  - Its doc, e.g., `<FILE>.README.md` or the section of a design doc that names it
-  - Its test, e.g., `test/test_<FILE>.py`
-- Find the test helpers, i.e., test files that have no `test_` prefix, e.g.,
-  `test/epq_test_utils.py`
-
-## Order the Code
-
-- Build the import graph of the files of the dir
-  - Read the `import` lines of each file, and keep the imports that point to
-    another file of the dir
-- Sort the `code` files bottom up
-  - A file with no imports from the dir comes first
-  - A file comes after all the files that it imports
-  - Break ties with the smaller file first
-  - Entry points come last, in the order that the docs give for running them
-- If the graph has a cycle, report it in the "Map of the Dir" and sort the files of
-  the cycle by size
+- Use the reading speeds of the roadmap
+  - The time of a `Skim` item uses the skim speed
+  - The time of a `Read` item uses the speed of the kind of the file
+- Compute the minutes of an item as `ceil(lines / speed)`, with 1 as the minimum
+- Estimate the other items by hand, in whole mins:
+  - Run `--help` or a dry run: 2
+  - Run `pytest` on one test file: 1
+  - Run `pytest` on the whole dir: 2, or the measured time rounded up
+  - Run a command that needs the internet, an LLM, or a browser: 5 to 30, and say
+    what it needs
+  - Check a claim of the docs against the code: 5
+  - Run the coverage: 5
+  - Check a file against a rules file: 2 per file
+- Show the time at the start of each item as `(<N> mins)`, and `(1 min)` for one min
+- Sum the times of the items of each level
+  - Print the sum in the `Time` line of the level
+  - For Level 2 and the next, also print the sum up to that level
+  - Use these fixed titles, and do not compute a title from the sums:
+    - `# Level 1: Understand in 15 Mins`
+    - `# Level 2: Understand in 1 Hour`
+    - `# Level 3: Understand in Full`
+  - The `Time` line holds the real sum, so the reader can see the gap with the title
 
 ## Understand Enough to Write Items
 
 - For each file read the docstring or the first lines, and the doc that is paired
   with it
 - Write the purpose of a file in one short line
+  - Take the purpose of the entry points and of the layers from the roadmap
   - If the purpose is not clear from the file, write only the file name and put
     `purpose unknown` in the line
   - Do not guess
-
-## Write the Map
-
-- Fill "Map of the Dir" of the template
-  - One sentence for the purpose, from the README or the PRD
-  - The entry points
-  - The layers, bottom first, with one line per file
-  - The table with one row per file, including the skipped data files
-    - Write the paths in the table relative to the dir, and say so in the line
-      above the table
+- Find the docs that contain a diagram, e.g., mermaid, PlantUML, C4, Graphviz, or
+  TikZ:
+  ```bash
+  > grep -rlE '```(mermaid|plantuml|dot|graphviz|tikz)|C4Context|C4Container|C4Component|@startuml' <DIR> --include='*.md'
+  ```
+  - Note the kind of the diagram of each file, e.g., `C4 diagram (PlantUML)`
+- Find the examples to run
+  - Take the example commands from the README of the dir and of the scripts
+  - Take the flags from `--help`, e.g., `--dry_run` and `-v DEBUG`
+  - Run each command that needs no internet, no LLM, and no browser, and check
+    that it works
+  - Do not invent a command or a flag
 
 ## Write the Levels
 
-- Write all four levels of the template
-  - **Level 1: Understand the Code in 10 Mins**: what the dir does and how to run it
-  - **Level 2: Understand the Code in 1 Hour**: components and data flow
-  - **Level 3: Understand the Code in 4 Hours**: every code file and its test
-  - **Level 4: Understand the Code in Full**: edge cases, diffs, rules, and gaps
-- Fill each level with three groups of items: `Docs`, `Code`, `Tests`
-  - In Level 3 use one group `Code and Tests` in place of `Code` and `Tests`
-  - Add a fourth group `Check Yourself` with questions that the reader must answer
-    without looking at the code
+- Write all three levels of the template
+  - **Level 1**: what the dir does and how to run it
+  - **Level 2**: components and data flow
+  - **Level 3**: every file, its test, the checks, and the end-to-end demo
+- Fill each level with the groups `Docs`, `Code`, `Tests`, and `Examples`
+  - In Level 3 use one group `Code and Tests, Bottom Layer First` in place of `Code`
+    and `Tests`, and add the groups `Checks` and `End-to-End Demo`
+  - If a level has no item for a group, drop the group instead of writing a filler
+- Read or skim whole files only
+  - Start each reading item with `Read all of` or `Skim all of`
+  - Do not limit an item to a section, a function, or a range of lines
+  - Do not write `Look at`, section names, or function names as the scope of an item
+  - The only exception is the header of a raw export
+- Use `Skim all of` to map a file, and `Read all of` to understand it
+  - A file may appear in two levels only when the second item goes deeper, i.e.,
+    from `Skim all of` to `Read all of`
+  - Level 3 reads every file in full, so a file appears in it once, with
+    `Read all of`: do not skim a file and then read it in Level 3
 - Level 1 items
-  - Read only the README summary and the entry point docstrings and arguments
-  - Do not open a test body
-  - Total size to read: under 300 lines
+  - Skim the README of the dir, which holds the `# Review roadmap`, and the README of
+    its docs
+  - Skim the small example input
+  - Run `--help` of the entry points
+  - Run the dry run of the runner and of the first stage
+  - List the test files, and match each one with the code it tests, using the table
+    of the roadmap
+  - Do not open a code file or a test file
+  - Keep the level under 20 mins
 - Level 2 items
-  - Read the architecture and the flow docs
-  - Read the types file and `_main()` of each entry point, in the run order
-  - Run the test suite once, and read the end-to-end test
-  - If the dir has no types file, read the most imported `code` file
+  - Read the architecture doc, and skim the flow doc
+  - Skim the types file and each stage
+  - Run all the tests with `pytest`, and in Docker
+  - Run the end-to-end test with the live log
+  - Read the end-to-end test, and skim the test helpers
+  - Keep the level under 90 mins
 - Level 3 items
-  - Write one item per `code` file, in the bottom up order, each followed by the item
-    of its test file
-  - If the test helpers were not read in Level 2, put them before the first test that
-    uses them
-  - In "Look at", name the main flow only, so that Level 4 can cover the private
-    helpers and the error paths
-  - Add an item to trace one input through all the stages
-  - Add an item to check three claims in the docs against the code
-- Level 4 items
-  - Add every file that is not in the levels above, including `data` files
-  - Add the private functions, the error paths, and the `TODO` comments
-  - Add the `git diff` of the changed files when the inventory shows changes
-  - Add the check against the coding rules and the testing rules
-  - Add the coverage run
-- Do not repeat an item in two levels
-  - If a file is read in Level 3, its Level 4 item is about the part that Level 3
-    skipped
-- If a level has no item for a group, drop the group instead of writing a filler
+  - In `Docs`, read the flow doc, the PRD, the decisions, the progress doc, and the
+    plan
+  - In `Docs`, read each design doc and each script README right before the code that
+    it describes, in the order of the code
+  - In `Docs`, read the logs, the todos, the background notes, and the `data` files
+    that the code uses, e.g., config, prompt, and example input
+  - In `Code and Tests`, write for each `code` file, in the order of the `code` rows
+    of the roadmap, i.e., bottom up:
+    - `Read all of` the file
+    - `Read all of` its test file, if it has one
+    - `Run pytest` on its test file and match each test name with the code
+  - If the test helpers were not read in Level 2, or were only skimmed, put
+    `Read all of` them before the first test that uses them
+  - In `Checks`, add:
+    - Three items that check a claim of the docs against the code
+    - An item to mark each doc line that disagrees with the code with
+      `// TODO(gp): Check ...`
+    - The `git diff` of the changed files when `git status` shows uncommitted
+      changes, and skip it when the dir is clean
+    - The check against the coding rules and the testing rules
+    - The coverage run
+  - In `Examples`, run the dry run again with `-v DEBUG`
+  - In `Examples`, run the first stage on the example input, and run the dry run of
+    the next stages on its output
+    - Say what it needs, e.g., `needs internet`
+  - In `Examples`, add an item to trace one input through all the stages with the
+    end-to-end test
+  - In `End-to-End Demo`, follow the section "Write the End-to-End Demo"
+
+## Write the End-to-End Demo
+
+- Take the demo command from the README of the dir
+  - Use the runner of the dir on the small example input
+  - Send the output to `./run_demo` or to the output dir that the README gives
+  - Do not invent the command or a flag
+- Start the group with bullets that explain the output, before the items
+  - Take the list of the output files from the README of the dir, e.g., from the
+    section "Output Dir", and from the files that a past run left in the output dir
+  - Say, for each file or group of files:
+    - The name, with `<BASE>` or `NN` as in the README
+    - What the file holds, in one short line
+    - The stage that writes it
+  - Cover the results, the issues, the summaries, and the cache and logs
+  - Do not guess: if the content of a file is not clear, open the file, or write
+    `purpose unknown`
+- Add the result of a past run when an output dir exists
+  - Take the counts from the summary files, e.g., processed, failed, and issues
+  - Write that a past run gave them, and that they can change with the internet and
+    the LLM
+  - Do not run a command that costs money to get the counts: ask the user instead
+- Add these items, in this order:
+  - Run the demo: say what it needs and what it costs
+  - List the output dir, and match each file with the explanation and the stage
+  - Read each summary file, and check that each failed item is in the issues file
+  - Compare two values of the report with the value in the file of one item
+  - Run the same command again, and check that the finished work is skipped
 
 ## Write the Items
 
-- Make each item one line of at most 85 characters, or two lines with the second
-  line indented by 6 spaces
-- Start each item with a verb: `Read`, `Run`, `List`, `Trace`, `Compare`, `Say`,
-  `Name`, `Draw`
+- Start each item with its time, then the checkbox text: `- [ ] (<N> mins) ...`
+- Make each item at most 4 lines of at most 85 characters, with the continuation
+  lines indented by 6 spaces
+  - Split an item that needs more lines into two items
+  - A line that holds only one path may pass 85 characters
+- Start each action with a verb: `Read all of`, `Skim all of`, `Run`, `List`,
+  `Check`
 - Name each file in backticks with the path from the repo root
-- For a `Read` item of a file, add the line count and `modified` when the file has
-  uncommitted changes
-- Add what to look at after the purpose
-  - E.g., the classes, the public functions, the error handling, the files written
+- For each doc that contains a diagram, add a render step to its reading item, so
+  that the reader sees the diagram and not its source
+  - Keep `Read all of` or `Skim all of` at the start of the item, and add the line
+    `It has a <KIND> diagram: render it first:`
+  - Add under it the command in a fenced block, with the path from the repo root:
+    ```bash
+    > open_md.py -i <DOC_PATH>
+    ```
+  - Do this in every item that reads or skims the doc, and add no time for it
+  - Do not use `open_md.py -i` for a doc with no diagram
+- For a reading item, add the line count and `modified` when the file has uncommitted
+  changes, then the purpose
+- For a `Run` item, put the command in a fenced block under the item
+  - Use `pytest <PATH>` or `invoke docker_cmd --cmd "pytest <PATH>"` for tests
+  - Do not use `uv` to run the tests
 - Make each item checkable: the reader must know when it is done
-  - **Bad** (no path from the repo root, no size, no purpose, no focus)
+  - **Bad** (no time, no path from the repo root, part of a file, no purpose)
     ```markdown
-    - [ ] Read epq_report.py
+    - [ ] Read the functions `_parse()` and `_main()` of epq_report.py
     ```
   - **Good**
     ```markdown
-    - [ ] Read `research/Estimate_academic_paper_quality/epq_report.py` (535 lines,
-          modified): writers and readers of the output files. Look at the issues file
+    - [ ] (27 mins) Read all of `research/Estimate_academic_paper_quality/epq_report.py`
+          (535 lines): writers and readers of the output files
     ```
   - **Bad** (a vague check)
     ```markdown
-    - [ ] Understand the pipeline
+    - [ ] (5 mins) Understand the output dir
     ```
   - **Good** (the reader can fail it)
     ```markdown
-    - [ ] Name the four stages in order and the file that each one writes
+    - [ ] (5 mins) Check claim 1: each file in the tree of "Output Dir" has a
+          `get_*_path` function in `research/Estimate_academic_paper_quality/epq_paths.py`
     ```
 
 ## Report
 
 - Print the path of the checklist file
-- Print the number of items per level
-- Print the list of skipped files, if any
+- Print the number of items and the time of each level
+- Print the list of skipped files of the roadmap, if any
 - Do not commit the file
 
 # Constraints
 
 - Do not modify any file of the reviewed dir, other than the checklist file
+  - Running the scripts of the dir can create `*.log` files: delete those that the
+    run created
 - Do not invent a command, a file, or a function
-  - Run the test command and the coverage command only if the dir shows how: a
-    README, a `Makefile`, an `invoke` task, or a `pytest.ini`
-  - If the command is unknown, write `find the test command` as the item text
-- Do not put the whole code of the dir in the level 1 or level 2
+  - If the command is unknown, write `find the command` as the item text
 - Use `:` and not `-` to separate a file from its description
 - Do not use emojis or the em-dash
 
 # Examples
 
 - Run on the dir `research/Estimate_academic_paper_quality`
-  - Level 1 reads `research/Estimate_academic_paper_quality/README.md` and
-    `--help` of the four executables
-  - Level 2 reads `docs/02-design.architecture.md`, `epq_types.py`, and the `_main()`
-    of `resolve_papers.py`, `download_papers.py`, `extract_features.py`, and
-    `report_papers.py`
-  - Level 3 reads `epq_paths.py`, then `epq_issues.py`, and so on up to
-    `estimate_paper_quality.py`, each followed by its test
-  - Level 4 reads `qs_2027.csv` header, `extract_features.prompt.md`, and the diff of
-    the modified files
+  - Level 1 skims `research/Estimate_academic_paper_quality/README.md`, and runs the
+    dry run of `estimate_paper_quality.py` on `paper_list.short.csv`
+  - Level 2 reads the architecture doc, skims `epq_types.py` and the four stages, and
+    runs the end-to-end test with the live log
+  - Level 3 reads `epq_paths.py`, reads `test/test_epq_paths.py`, runs it, and so on
+    up to `populate_affiliation_tiers.py`, then reads the plan and the decisions
+  - Level 3 ends with the end-to-end demo: it runs the pipeline on
+    `paper_list.short.csv` into `./run_demo`, explains each output file, and checks
+    the summary of each stage
 
 # Verification
 
 - [ ] The output file is named `checklist-coding.review_code_dir.md` and is in the
       reviewed dir
-- [ ] The four levels are present, in order, with the titles of the template
+- [ ] Exactly three levels are present, in order, with the fixed titles
+      `Understand in 15 Mins`, `Understand in 1 Hour`, and `Understand in Full`
 - [ ] Every checkbox starts with `- [ ]` or `- [x]`
-- [ ] Every `code`, `doc`, and `test` file of the inventory appears in at least one
-      item, or in the "Skipped" line
+- [ ] Every item starts with `(<N> mins)` or `(1 min)` after the checkbox
+- [ ] The `Time` line of each level equals the sum of the times of its items
+- [ ] The group `End-to-End Demo` is in Level 3, with the bullets that explain each
+      output file, the run item, and the check of the output
+- [ ] Each output file named in the explanation exists in the README of the dir
+- [ ] The checklist has no `# Map of the Dir`, no reading speeds, and no table of the
+      files
+- [ ] The header says that the map and the table are in the section
+      `# Review roadmap` of the `README.md` of the dir
+- [ ] The paths in the items are from the repo root
+- [ ] The time of each reading item follows the reading speeds of the roadmap
+- [ ] Every item that reads a file starts with `Read all of` or `Skim all of`
+  - The only exceptions are the diff items and the header of a raw export
+- [ ] No reading item contains `Look at`, a section name, or a function name as its
+      scope
+- [ ] Every `code`, `doc`, and `test` file of the table of the roadmap appears in at
+      least one item, or in the "Skipped" line of the roadmap
 - [ ] Every file named in the checklist exists
-- [ ] The Level 3 code items follow the bottom up order of the import graph
-- [ ] No item appears in two levels
-- [ ] No line is over 85 characters outside code blocks
+- [ ] The Level 3 code items follow the order of the `code` rows of the roadmap,
+      i.e., bottom up in the import graph
+- [ ] No item appears twice with the same action in two levels
+- [ ] No file is skimmed and then read in Level 3
+- [ ] Every item that reads a doc with a diagram has the step
+      `open_md.py -i <DOC_PATH>`, and no other item has it
+- [ ] Every example command was run, or says what it needs
+- [ ] No test command uses `uv`
+- [ ] No line is over 85 characters outside code blocks, tables, and lines that
+      hold only one path
+- [ ] No item is longer than 4 lines
 - [ ] No file of the reviewed dir changed, other than the checklist file
