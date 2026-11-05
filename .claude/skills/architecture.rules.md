@@ -644,6 +644,7 @@ Conventions for software architecture and code organization
   - Write the file also when no unit fails, so the user knows that the stage ended
   - Overwrite it at each run, so it describes the last run
 - In a dry run, log what the stage would process and write no file
+- Put the time that the stage took in the summary, per `ARCH3.10`
 - Build the text in one function from a dataclass of counts, per `ARCH2.3`
   - Each stage fills the dataclass in its own loop, and one test checks the format of
     all the stages
@@ -659,11 +660,65 @@ Conventions for software architecture and code organization
     Processed in this run:   8
     Completed successfully:  6
     Failed:                  2
+    Elapsed time: 1 min 15.3 sec
     Output files written in this run:
       'run_1/papers/<BASE>.pdf': 6 files
       'run_1/papers/<BASE>.md': 6 files
     Issues file: 'run_1/02-download.issues.json' (2 issues)
     Summary file: 'run_1/02-download.summary.txt'
+  ```
+
+## `ARCH3.10`: Report How Long Each Stage Took
+
+- Measure the wall-clock time of each stage and report it
+  - A slow stage (a network call, an LLM call) is otherwise hidden in the log
+  - The user then sees which stage to speed up, and how much a rerun saved
+- Start the timer at the top of the function of the stage, and read it when you
+  build the summary, per `ARCH3.9`
+  - Use `helpers.htimer.Timer`, not `time.time()` arithmetic in each stage
+- Keep the time in the dataclass of the summary, per `ARCH2.3`, as `elapsed_sec`
+  - The log and the file `NN-<stage>.summary.txt` then show the same time
+  - In a dry run, show no time, since the stage processes nothing
+- Format the time in one function that all the stages and the driver call
+  - Show one decimal digit for the seconds, and drop the leading units that are
+    zero: `12.3 sec`, `1 min 15.3 sec`, `1 h 2 min 5.0 sec`
+  - Round before you split the units, so that `59.96` is `1 min 0.0 sec` and not
+    `60.0 sec`
+- Let a driver script that runs the executables, per `ARCH3.5`, log at the end the
+  time of each executable and the total
+  - The time of an executable includes its start-up, so the total is a bit more
+    than the sum of the times in the summaries of the stages
+- Test the time without a flaky test:
+  - Replace the time in the summary files with `<TIME>` in the helper that reads
+    them
+  - Test the format function on fixed values, including the edges at 60 seconds
+    and at 1 hour
+  - Test one stage with a real wait, and check that its time is at least the wait
+- **Bad** (no time: the user cannot tell which stage is slow)
+  ```text
+  Stage `extract` summary
+    Papers in input:        20
+    Completed successfully: 20
+  ```
+- **Bad** (a raw float that the user must convert, and a different format in each
+  stage)
+  ```text
+  Stage `extract` summary: took 4523.8812 s
+  Stage `download` summary: 1:15
+  ```
+- **Good** (one format, in the summary of every stage)
+  ```text
+  Stage `extract` summary
+    Papers in input:        20
+    Completed successfully: 20
+    Elapsed time: 1 h 15 min 23.9 sec
+  ```
+- **Good** (the driver adds the time of each executable and the total)
+  ```text
+  Time of each action
+    resolve_papers:   12.3 sec
+    download_papers:  1 min 5.0 sec
+    Total:            1 min 17.3 sec
   ```
 
 # ARCH4: Validation
