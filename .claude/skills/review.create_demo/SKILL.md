@@ -8,8 +8,9 @@ model: sonnet
 - Given a dir that holds a tool, write the file `code_demo.md` in that dir
 - The file shows a short demo of the tool in four parts:
   - What the tool does, in a few lines
-  - What to run: the command, what it needs, what it costs, and how long it takes
-  - What is generated: each output file, what it holds, and the stage that writes it
+  - **What to run**: the command, what it needs, what it costs, and how long it takes
+  - **What is generated**: each output file, what it holds, and the stage that
+    writes it
   - What a past run gave, and how to check the output
 - Keep the file short: a reader must run the demo after reading it for 5 mins
 - The file is the source of the end-to-end demo of `code_tour.md`

@@ -9,9 +9,9 @@ model: sonnet
   guides a human to read and understand the code, the documentation, and the tests of
   that dir
 - Split the checklist in exactly three levels:
-  - Level 1: "Understand in 15 mins"
-  - Level 2: "Understand in 1 hour"
-  - Level 3: "Understand in full"
+  - **Level 1**: "Understand in 15 mins"
+  - **Level 2**: "Understand in 1 hour"
+  - **Level 3**: "Understand in full"
   - Do not add a fourth level, and do not rename a level
   - Each level adds items to the levels before it
   - A reader can stop after any level and still know the dir at that depth

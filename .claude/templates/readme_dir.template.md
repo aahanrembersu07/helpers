@@ -163,12 +163,12 @@ file>
 - Use this section to plan the review of the dir
 - The checklist of the review is `<path_from_repo_root>/code_tour.md`
   - It is made from this section by `.claude/skills/review.create_code_tour/SKILL.md`
-- Purpose: <ONE_SENTENCE_PURPOSE>
+- **Purpose**: <ONE_SENTENCE_PURPOSE>
 - Entry points, in run order:
   - `<ENTRY_POINT_PATH>`: <PURPOSE>
 - Layers, bottom first:
   - `<FILE_PATH>`: <PURPOSE>
-- Cycles in the import graph: <NONE_OR_LIST>
+- **Cycles in the import graph**: <NONE_OR_LIST>
 
 ## Testing
 
@@ -189,10 +189,10 @@ file>
   - Total to read every file once: <TOTAL_MINS> mins, about <TOTAL_HOURS> hours
 - The kinds come in this order: code, doc, test, data. Inside each kind, the rows
   are in reading order:
-  - Code: bottom up in the import graph, then the entry points in run order
-  - Docs: <ORDER_OF_THE_DOCS>
-  - Tests: <ORDER_OF_THE_TESTS>
-  - Data: <ORDER_OF_THE_DATA>
+  - **Code**: bottom up in the import graph, then the entry points in run order
+  - **Docs**: <ORDER_OF_THE_DOCS>
+  - **Tests**: <ORDER_OF_THE_TESTS>
+  - **Data**: <ORDER_OF_THE_DATA>
 - The rows are not in the order of the checklist, which mixes the kinds: it reads
   each doc before its code, and each test after its code
 
@@ -200,6 +200,6 @@ file>
 | :--- | :------------ | :----------------------- | --------- | -------- | -------- | :----------- | :------------ |
 | [ ]  | `<FILE_PATH>` | code / doc / test / data | `<LINES>` | `<MINS>` | yes / no | `<DOC_PATH>` | `<TEST_PATH>` |
 
-- Skipped: <LIST_OF_SKIPPED_FILES_WITH_REASON>
+- **Skipped**: <LIST_OF_SKIPPED_FILES_WITH_REASON>
 - Running a script writes `<SCRIPT>.log` next to it: ignore these files
 - <OTHER_NOTES_ON_THE_TABLE, e.g., the code that has no test file of its own>

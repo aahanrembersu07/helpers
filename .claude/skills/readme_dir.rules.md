@@ -110,10 +110,10 @@ Conventions for writing a README for a directory with executables
 
 - Find all executable filesS
 - Use Markdown tables for many related commands
-- Column headers: Name | Description
+- **Column headers**: Name | Description
 - One-sentence descriptions
-- Good for: git commands, utility scripts, CLI tools
-- Format:
+- **Good for**: git commands, utility scripts, CLI tools
+- **Format**:
   ```markdown
   | Command | Description |
   | :------- | :------- |

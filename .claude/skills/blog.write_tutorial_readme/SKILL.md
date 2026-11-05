@@ -12,9 +12,9 @@ model: opus
 
 # Audience
 
-- Target: Software engineers and technical practitioners
-- Skill level: General to intermediate (some programming knowledge assumed)
-- Goal: Enable readers to use the tool/technique effectively after reading
+- **Target**: Software engineers and technical practitioners
+- **Skill level**: General to intermediate (some programming knowledge assumed)
+- **Goal**: Enable readers to use the tool/technique effectively after reading
 
 # Tutorial Structure
 

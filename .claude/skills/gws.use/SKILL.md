@@ -113,6 +113,6 @@ When the user encounters issues:
 - Suggest checking Google Workspace admin console for audit logs
 
 # References
-- GitHub Repository: https://github.com/googleworkspace/cli
-- Google Workspace Admin Help: https://support.google.com/a
-- Google Cloud Console: https://console.cloud.google.com
+- **GitHub Repository**: https://github.com/googleworkspace/cli
+- **Google Workspace Admin Help**: https://support.google.com/a
+- **Google Cloud Console**: https://console.cloud.google.com

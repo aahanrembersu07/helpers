@@ -7,14 +7,14 @@
 # What the Tool Does
 
 - <PURPOSE_OF_THE_TOOL_IN_ONE_LINE>
-- Input: <INPUT>, e.g., `<INPUT_EXAMPLE_PATH>`
-- Output: <OUTPUT>, in `<OUTPUT_DIR>`
+- **Input**: <INPUT>, e.g., `<INPUT_EXAMPLE_PATH>`
+- **Output**: <OUTPUT>, in `<OUTPUT_DIR>`
 
 # Run the Demo
 
-- Needs: <RESOURCES>
-- Costs: <COST>
-- Time: <N> mins
+- **Needs**: <RESOURCES>
+- **Costs**: <COST>
+- **Time**: <N> mins
 - Run the demo from the repo root:
   ```bash
   > <SETUP_COMMAND>

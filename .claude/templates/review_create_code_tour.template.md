@@ -9,8 +9,8 @@
 
 # Level 1: Understand in 15 Mins
 
-- Goal: know what the dir does and how to run it
-- Time: <LEVEL_1_MINS> mins
+- **Goal**: know what the dir does and how to run it
+- **Time**: <LEVEL_1_MINS> mins
 
 ## Docs
 
@@ -35,8 +35,9 @@
 
 # Level 2: Understand in 1 Hour
 
-- Goal: know the components and how the data flows between them
-- Time: <LEVEL_2_MINS> mins in this level, <CUMULATIVE_MINS> mins up to this level
+- **Goal**: know the components and how the data flows between them
+- **Time**: <LEVEL_2_MINS> mins in this level, <CUMULATIVE_MINS> mins up to this
+  level
 
 ## Docs
 
@@ -68,8 +69,9 @@
 
 # Level 3: Understand in Full
 
-- Goal: know every file, the edge cases, and the open problems
-- Time: <LEVEL_3_MINS> mins in this level, <CUMULATIVE_MINS> mins up to this level
+- **Goal**: know every file, the edge cases, and the open problems
+- **Time**: <LEVEL_3_MINS> mins in this level, <CUMULATIVE_MINS> mins up to this
+  level
 
 ## Docs
 

@@ -64,9 +64,9 @@ model: haiku
   > git status --short <DIR>
   ```
 - Skip, and list in the "Skipped" line with the reason:
-  - Logs: `*.log`
-  - Scratch files: `tmp.*`
-  - Caches: `__pycache__/`, `.ruff_cache/`, `.pytest_cache/`
+  - **Logs**: `*.log`
+  - **Scratch files**: `tmp.*`
+  - **Caches**: `__pycache__/`, `.ruff_cache/`, `.pytest_cache/`
   - Symlinks
   - The checklist file `code_tour.md`
 - Keep a raw export in the table, but give it no time
@@ -136,10 +136,10 @@ model: haiku
   - The path of the checklist file `<DIR>/code_tour.md`, made from this section by
     `.claude/skills/review.create_code_tour/SKILL.md`
 - Write the map, as bullets, with the path from the repo root for every file
-  - Purpose: one sentence, from the Goal of the Summary
+  - **Purpose**: one sentence, from the Goal of the Summary
   - Entry points, in run order, with one line each
   - Layers, bottom first, with one line each
-  - Cycles in the import graph: none, or the list
+  - **Cycles in the import graph**: none, or the list
 - Write a subsection `## Testing`
   - Take the way to run the tests from `helpers_root/CLAUDE.md` `## Testing`
   - Give the command for the dev env and the command for Docker, in a fenced block

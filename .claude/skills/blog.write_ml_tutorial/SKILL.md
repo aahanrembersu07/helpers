@@ -18,19 +18,18 @@ model: opus
 ## Write the Post
 - Follow this structure:
   - Title
-  - Subtitle: a short description of the post, written in first person
-  - Introduction: explain the library or technique and its benefits in simple
+  - **Subtitle**: a short description of the post, written in first person
+  - **Introduction**: explain the library or technique and its benefits in simple
     terms
-  - Competitors: explain the main competitors and why this library may be
-    better
-  - Problem Statement: explain the problem and how the library or technique is
+  - **Competitors**: explain the main competitors and why this library may be better
+  - **Problem Statement**: explain the problem and how the library or technique is
     used to solve it
-  - Solution: explain the solution, use code snippets, output examples, and
-    screenshots; keep it simple and concise so the reader can understand it
-    without running the code
-  - Conclusion: summarize the benefits of the library or technique and why it
-    is better than others for the given use case
-  - References: list the references used to write the post
+  - **Solution**: explain the solution, use code snippets, output examples, and
+    screenshots; keep it simple and concise so the reader can understand it without
+    running the code
+  - **Conclusion**: summarize the benefits of the library or technique and why it is
+    better than others for the given use case
+  - **References**: list the references used to write the post
 - For each section, write a title that brings some interest while staying
   concise
 
