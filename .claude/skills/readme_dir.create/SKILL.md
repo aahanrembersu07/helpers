@@ -16,7 +16,7 @@ model: haiku
 - End the README with the section `# Review roadmap`: the map of the dir, the way to
   run the tests, the reading speeds, and the table of the files with the time to read
   each one
-  - The skill `.claude/skills/coding.review_code_dir/SKILL.md` reads this section to
+  - The skill `.claude/skills/review.create_code_tour/SKILL.md` reads this section to
     write the checklist that guides the review of the dir
 
 # Workflow
@@ -68,7 +68,7 @@ model: haiku
   - Scratch files: `tmp.*`
   - Caches: `__pycache__/`, `.ruff_cache/`, `.pytest_cache/`
   - Symlinks
-  - The checklist file `checklist-coding.review_code_dir.md`
+  - The checklist file `code_tour.md`
 - Keep a raw export in the table, but give it no time
   - E.g., a CSV over 1000 lines that a person downloads
 - Running the scripts of the dir can create `<SCRIPT>.log` files next to the scripts
@@ -133,8 +133,8 @@ model: haiku
     rows that are still in the new table
 - Write the intro bullets
   - The use of the section
-  - The path of the checklist file `<DIR>/checklist-coding.review_code_dir.md`, made
-    from this section by `.claude/skills/coding.review_code_dir/SKILL.md`
+  - The path of the checklist file `<DIR>/code_tour.md`, made from this section by
+    `.claude/skills/review.create_code_tour/SKILL.md`
 - Write the map, as bullets, with the path from the repo root for every file
   - Purpose: one sentence, from the Goal of the Summary
   - Entry points, in run order, with one line each

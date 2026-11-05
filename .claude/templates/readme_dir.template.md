@@ -161,8 +161,8 @@ descriptions (<20 words)>
 file>
 
 - Use this section to plan the review of the dir
-- The checklist of the review is `<path_from_repo_root>/checklist-coding.review_code_dir.md`
-  - It is made from this section by `.claude/skills/coding.review_code_dir/SKILL.md`
+- The checklist of the review is `<path_from_repo_root>/code_tour.md`
+  - It is made from this section by `.claude/skills/review.create_code_tour/SKILL.md`
 - Purpose: <ONE_SENTENCE_PURPOSE>
 - Entry points, in run order:
   - `<ENTRY_POINT_PATH>`: <PURPOSE>

@@ -251,12 +251,12 @@ Conventions for writing a README for a directory with executables
 ## Review Roadmap Section
 
 - Use the header `# Review roadmap` as the last section of the README
-- The skill `.claude/skills/coding.review_code_dir/SKILL.md` reads this section to
+- The skill `.claude/skills/review.create_code_tour/SKILL.md` reads this section to
   write the checklist that guides the review of the dir, so keep the parts and the
   order below
 - Use these parts, in this order:
   - **Intro bullets**: the use of the section, and the path of the checklist file
-    `checklist-coding.review_code_dir.md`
+    `code_tour.md`
   - **Map**: bullets with the purpose, the entry points in run order, the layers
     bottom first, and the cycles in the import graph
     - Write the path from the repo root for every file, with one line of purpose

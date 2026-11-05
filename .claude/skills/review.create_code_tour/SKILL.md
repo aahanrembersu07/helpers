@@ -1,12 +1,13 @@
 ---
-description: Write a leveled checklist to understand the code, docs, and tests of a dir
+description: Write code_tour.md, a leveled checklist to understand the code, docs, and tests of a dir
 model: sonnet
 ---
 
 # Goal
 
-- Given a dir, write a markdown file with checkboxes that guides a human to read and
-  understand the code, the documentation, and the tests of that dir
+- Given a dir, write the file `code_tour.md`: a markdown file with checkboxes that
+  guides a human to read and understand the code, the documentation, and the tests of
+  that dir
 - Split the checklist in exactly three levels:
   - Level 1: "Understand in 15 mins"
   - Level 2: "Understand in 1 hour"
@@ -16,8 +17,10 @@ model: sonnet
   - A reader can stop after any level and still know the dir at that depth
 - Give the time of every item, so that the reader can plan the work
 - Include examples and tests to run, so that the reader sees how the code behaves
-- Include one end-to-end demo run in Level 3, with an explanation of what each
-  output file is
+- Include the end-to-end demo in Level 3, taken from the file `code_demo.md` of the
+  dir
+  - The skill `.claude/skills/review.create_demo/SKILL.md` writes this file
+  - The tour does not repeat the explanation of the output: it points to the file
 - Take the files, their kinds, the time to read each one, and the order of the code
   from the section `# Review roadmap` of the `README.md` of the dir
   - The skill `.claude/skills/readme_dir.create/SKILL.md` writes this section
@@ -26,7 +29,7 @@ model: sonnet
 # Conventions
 
 - Write the checklist following the template
-  `.claude/templates/coding_review_code_dir.template.md`
+  `.claude/templates/review_create_code_tour.template.md`
   - The template has no `# Map of the Dir`: the map is in the README
 - Write the text following `.claude/skills/text.rules.md` and
   `.claude/skills/markdown.rules.md`
@@ -46,16 +49,19 @@ model: sonnet
   ```bash
   > git rev-parse --show-toplevel
   ```
-- Write the output file in the dir, named
-  `checklist-coding.review_code_dir.md`
-  - This follows the convention in `.claude/skills/skill.rules.md`
-    `## Generated File Naming`
+- Write the output file in the dir, named `code_tour.md`
+  - The name is fixed: it does not follow `## Generated File Naming` of
+    `.claude/skills/skill.rules.md`
   - If the file exists, overwrite it after reading it, and keep the items that are
     already ticked when the same item is still in the new checklist
 - Take the `README.md` of the dir
   - If it does not exist, or it has no section `# Review roadmap`, report the error
     and stop
   - Tell the user to run `.claude/skills/readme_dir.create/SKILL.md` on the dir first
+- Take the `code_demo.md` of the dir
+  - If it does not exist, report the error and stop
+  - Tell the user to run `.claude/skills/review.create_demo/SKILL.md` on the dir
+    first
 
 ## Read the Roadmap
 
@@ -197,35 +203,15 @@ model: sonnet
     - Say what it needs, e.g., `needs internet`
   - In `Examples`, add an item to trace one input through all the stages with the
     end-to-end test
-  - In `End-to-End Demo`, follow the section "Write the End-to-End Demo"
-
-## Write the End-to-End Demo
-
-- Take the demo command from the README of the dir
-  - Use the runner of the dir on the small example input
-  - Send the output to `./run_demo` or to the output dir that the README gives
-  - Do not invent the command or a flag
-- Start the group with bullets that explain the output, before the items
-  - Take the list of the output files from the README of the dir, e.g., from the
-    section "Output Dir", and from the files that a past run left in the output dir
-  - Say, for each file or group of files:
-    - The name, with `<BASE>` or `NN` as in the README
-    - What the file holds, in one short line
-    - The stage that writes it
-  - Cover the results, the issues, the summaries, and the cache and logs
-  - Do not guess: if the content of a file is not clear, open the file, or write
-    `purpose unknown`
-- Add the result of a past run when an output dir exists
-  - Take the counts from the summary files, e.g., processed, failed, and issues
-  - Write that a past run gave them, and that they can change with the internet and
-    the LLM
-  - Do not run a command that costs money to get the counts: ask the user instead
-- Add these items, in this order:
-  - Run the demo: say what it needs and what it costs
-  - List the output dir, and match each file with the explanation and the stage
-  - Read each summary file, and check that each failed item is in the issues file
-  - Compare two values of the report with the value in the file of one item
-  - Run the same command again, and check that the finished work is skipped
+  - In `End-to-End Demo`, add these items, in this order:
+    - `Read all of` the file `code_demo.md`
+    - Run the demo with the command of `code_demo.md`: say what it needs and what it
+      costs, and copy the command, the needs, and the cost from the file
+    - List the output dir, and match each file with the section `# What Is Generated`
+      of `code_demo.md`
+    - Read each summary file, and check that each failed item is in the issues file
+    - Compare two values of the report with the value in the file of one item
+    - Run the same command again, and check that the finished work is skipped
 
 ## Write the Items
 
@@ -298,22 +284,22 @@ model: sonnet
     runs the end-to-end test with the live log
   - Level 3 reads `epq_paths.py`, reads `test/test_epq_paths.py`, runs it, and so on
     up to `populate_affiliation_tiers.py`, then reads the plan and the decisions
-  - Level 3 ends with the end-to-end demo: it runs the pipeline on
-    `paper_list.short.csv` into `./run_demo`, explains each output file, and checks
-    the summary of each stage
+  - Level 3 ends with the end-to-end demo: it reads `code_demo.md`, runs the demo
+    into `./run_demo`, matches each output file with `code_demo.md`, and checks the
+    summary of each stage
 
 # Verification
 
-- [ ] The output file is named `checklist-coding.review_code_dir.md` and is in the
-      reviewed dir
+- [ ] The output file is named `code_tour.md` and is in the reviewed dir
 - [ ] Exactly three levels are present, in order, with the fixed titles
       `Understand in 15 Mins`, `Understand in 1 Hour`, and `Understand in Full`
 - [ ] Every checkbox starts with `- [ ]` or `- [x]`
 - [ ] Every item starts with `(<N> mins)` or `(1 min)` after the checkbox
 - [ ] The `Time` line of each level equals the sum of the times of its items
-- [ ] The group `End-to-End Demo` is in Level 3, with the bullets that explain each
-      output file, the run item, and the check of the output
-- [ ] Each output file named in the explanation exists in the README of the dir
+- [ ] The group `End-to-End Demo` is in Level 3, with the items that read
+      `code_demo.md`, run the demo, and check the output
+- [ ] The group `End-to-End Demo` has no explanation of the output files: it points
+      to `code_demo.md`
 - [ ] The checklist has no `# Map of the Dir`, no reading speeds, and no table of the
       files
 - [ ] The header says that the map and the table are in the section
