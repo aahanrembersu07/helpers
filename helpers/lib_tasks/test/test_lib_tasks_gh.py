@@ -1659,6 +1659,13 @@ class Test_gh_publish_buildmeister_dashboard_to_s3(hunitest.TestCase):
             umock.patch.object(hsystem, "system"),
             umock.patch.object(hio, "listdir", return_value=[html_file]),
             umock.patch("helpers.hs3.copy_file_to_s3") as mock_copy,
+            # Avoid depending on the `origin` remote of the clone running the
+            # test, which can differ from the one in `repo_config.yaml`.
+            umock.patch.object(
+                hltltagh,
+                "_get_repo_full_name_from_cmd",
+                return_value=("github.com/causify-ai/helpers", "helpers"),
+            ),
         ):
             hltltagh.gh_publish_buildmeister_dashboard_to_s3(
                 ctx, mark_as_latest=mark_as_latest

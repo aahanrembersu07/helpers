@@ -1305,8 +1305,11 @@ def get_amp_abs_path() -> str:
     )
     repo_sym_names.append(extra_amp_repo_sym_name)
     _LOG.debug("repo_sym_names=%s", repo_sym_names)
-    #
-    if repo_sym_name in repo_sym_names:
+    # Compare only the repo name and ignore the GitHub account, so that forks
+    # (e.g., `gpsaggese/helpers` vs `causify-ai/helpers`) are recognized.
+    repo_names = [name.split("/")[-1] for name in repo_sym_names]
+    _LOG.debug("repo_names=%s", repo_names)
+    if repo_sym_name.split("/")[-1] in repo_names:
         # If we are in the amp repo, then the git client root is the amp
         # directory.
         git_root = get_client_root(super_module=False)
