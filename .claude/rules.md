@@ -182,6 +182,11 @@ Based on the files that you need to operate, read and follow the corresponding r
   - The rules `.claude/skills/related_python_packages.rules.md`
   - The template `.claude/templates/related_python_packages.template.md`
 
+- For the list of books related to the content of a directory
+  (`<DIR>/related_books.md`) you MUST follow:
+  - The rules `.claude/skills/related_books.rules.md`
+  - The template `.claude/templates/related_books.template.md`
+
 # Research
 
 ## Research Ideas
