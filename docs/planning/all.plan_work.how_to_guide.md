@@ -50,6 +50,7 @@
      - Use suggestion mode, so that other people can track the change
      - Once in a while, accept all the changes
   3. When the idea is picked, turn it into a file `research/ideas/<name>.md`
+     - Run `/research_idea.format` to make the file follow the standard template
 - Why use a Gdoc:
   - We keep track of work that could be done
   - Planning is simpler: someone who is blocked can open the Gdoc and choose a
