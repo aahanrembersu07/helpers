@@ -62,6 +62,11 @@ Based on the files that you need to operate, read and follow the corresponding r
 - For a TODO / task queue file organized by execution stage (e.g.,
   `ai_task_queue.md`) you MUST follow `.claude/skills/todo.rules.md`
 
+## GitHub
+
+- For GitHub issues, projects, branches, and PRs you MUST follow the rules
+  `.claude/skills/github.rules.md`
+
 ## GitHub PR Plan
 
 - For splitting a branch into a sequence of PRs you MUST follow the template
