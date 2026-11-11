@@ -29,8 +29,8 @@
 - Split the content by level of detail, and no further, since splitting things too
   much creates extra work:
   - The notebooks hold all the details
-  - The raw log tab of the Gdoc holds all the experiments
-  - The distilled tab of the Gdoc holds the executive summary
+  - The "Raw log" tab of the Gdoc holds all the experiments
+  - The "Research results" tab of the Gdoc holds the executive summary
   - The paper distills it further, to the interesting experiments
 
 ## Keep a Google Doc Per Project
@@ -42,15 +42,15 @@
   - `progress.md` holds the decisions made to implement the mechanisms, and links to
     the Gdoc for the findings instead of repeating them
 - Organize the Google Doc in tabs, so that each result is easy to find and to link:
-  - A raw log tab with everything: what was run, what it showed, what was asked, and
-    what was decided, newest entry first, with dates
-  - A distilled tab: an executive summary on top, then an H1 per type of experiment
-    and an H2 per sub-experiment
+  - A "Raw log" tab with everything, one entry per day, newest first: what was
+    run, what it showed, what was asked, and what was decided
+  - A "Research results" tab with the distilled summary: an executive summary on
+    top, then an H1 per type of experiment and an H2 per sub-experiment
     - For each experiment: the date, the issue and the PR, the notebook and its cell,
       the `config` of the run, the figures, a few bullets on what it shows, and its
       decisions
-  - A tab with the open questions, one item per question, and the agenda of the
-    meetings
+  - A "Project" tab with the open questions, one item per question, and the
+    agenda of the meetings
   - Then the paper distills the results further
 - Write each experiment so that a reader gets the gist without running the code, and
   the author can reproduce it from its `config`
