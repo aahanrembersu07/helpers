@@ -53,8 +53,7 @@
 
 ## Keep Research Discussions in the Gdoc
 
-- GP's rules
-  ([#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277)):
+- The rules:
   1. Stuff in GitHub and in Slack is meant to be lost
   2. GitHub is only for coding questions; research questions go in the Gdoc
   3. All the research discussions happen in the Gdoc, with comments and suggestion
@@ -92,7 +91,6 @@
 
 - A PR is hard to review by itself, so the reviewer compares what it means with the
   paper or the Gdoc
-  ([GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277))
   - Every PR that changes a result, a model, or an assumption names the paper section
     or the Gdoc heading that it changes, and updates it: the paper in the PR itself,
     the Gdoc when the PR is opened
@@ -157,9 +155,8 @@
 
 ## Example
 
-- The racket sports project in the `umd_classes` repo follows this guide
-  - `research/Optimal_strategy_for_racket_sports/project_management.explanation.md`:
-    the rules of the project, the life of a research question, and the Paper and Gdoc
-    checklist
-  - Its Gdoc has a results tab with one Heading 1 per experiment, and an agenda tab
-    with the open questions for GP
+- Use the
+  [research Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit)
+  as the model
+  - A "Research results" tab with one Heading 1 per experiment
+  - A "Project" tab with the open research questions and their answers
