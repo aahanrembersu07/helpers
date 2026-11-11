@@ -170,5 +170,6 @@
 - Use the
   [research Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit)
   as the model
+  - A "Raw log" tab with all the work, one entry per day
   - A "Research results" tab with one Heading 1 per experiment
   - A "Project" tab with the open research questions and their answers
