@@ -5,12 +5,13 @@
 - Goal: a reader sees what was run, what result came out, what was asked and decided,
   and what to do next, without asking
 - Use this guide for a project that runs experiments, e.g., in notebooks
-- The implementation, the findings, and the decisions on the implementation go in
-  `progress.md`
+- The implementation and the decisions on the implementation go in `progress.md`,
+  with a link to the Gdoc for the findings
   - See
     [`docs/planning/all.plan_work.how_to_guide.md`](/docs/planning/all.plan_work.how_to_guide.md#keep-a-progress-log)
-- The visual evidence (e.g., screenshots of the results), the research questions,
-  their discussion, and the research decisions go in a Google Doc (Gdoc)
+- The raw log of the experiments, the visual evidence (e.g., screenshots of the
+  results), the research questions, their discussion, and the research decisions go
+  in one Google Doc (Gdoc) with several tabs
   - GitHub is only for code, and gets a link to each research question
   - See
     [Keep Research Discussions in the Gdoc](#keep-research-discussions-in-the-gdoc)
@@ -25,28 +26,37 @@
 
 - Keep the log and the paper updated
   - They are how we keep track of the results of the research
-- Split the content by level of detail:
+- Split the content by level of detail, and no further, since splitting things too
+  much creates extra work:
   - The notebooks hold all the details
-  - The log (`progress.md`) holds all the experiments
-  - The paper holds the interesting experiments
+  - The raw log tab of the Gdoc holds all the experiments
+  - The distilled tab of the Gdoc holds the executive summary
+  - The paper distills it further, to the interesting experiments
 
 ## Keep a Google Doc Per Project
 
-- Keep one Google Doc for the research of each project
-  - The Google Doc holds the visual evidence, the research questions, their
-    discussion, and the research decisions
-  - `progress.md` holds the findings and the decisions made to implement the
-    mechanisms
-- Organize the Google Doc so that each result is easy to find and to link:
-  - A results tab, with an H1 per type of experiment and an H2 per sub-experiment
-  - For each experiment: the date, the issue and the PR, the notebook and its cell,
-    the `config` of the run, the figures, a few bullets on what it shows, and its
-    decisions
-  - A tab for the agenda of the meetings, with the open research questions
+- Keep one Google Doc for the research of each project, with several tabs instead of
+  more docs
+  - The Google Doc holds the raw log, the visual evidence, the research questions,
+    their discussion, and the research decisions
+  - `progress.md` holds the decisions made to implement the mechanisms, and links to
+    the Gdoc for the findings instead of repeating them
+- Organize the Google Doc in tabs, so that each result is easy to find and to link:
+  - A raw log tab with everything: what was run, what it showed, what was asked, and
+    what was decided, newest entry first, with dates
+  - A distilled tab: an executive summary on top, then an H1 per type of experiment
+    and an H2 per sub-experiment
+    - For each experiment: the date, the issue and the PR, the notebook and its cell,
+      the `config` of the run, the figures, a few bullets on what it shows, and its
+      decisions
+  - A tab with the open questions, one item per question, and the agenda of the
+    meetings
+  - Then the paper distills the results further
 - Write each experiment so that a reader gets the gist without running the code, and
   the author can reproduce it from its `config`
 - Save the Google Doc in the shared
-  [research dir](https://drive.google.com/drive/folders/1XQ5zrk80eScbcynOsc1loDppzAjGNy2x)
+  [`Research projects`](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe)
+  folder
   - Create a subdir named exactly like the GH issue of the project
   - Put the Google Doc and its supporting files in that subdir
 - Link the Google Doc from the GH issue, the PR, and `progress.md`
@@ -68,21 +78,23 @@
   | Slack                 | Pings, with the link to the Gdoc                           | Questions, decisions |
 
 - The life of a research question:
-  1. Ask it in the Gdoc, as a comment that @mentions who should answer: on the result
-     it is about, or on its line in the list of open questions
-     - One comment per question: the context in one line, the question, the options,
+  1. Write it as an item in the list of open questions of the Gdoc, not only as a
+     comment, so that it is easy to find and reads on its own
+     - One item per question: the question, the context in one line, the options,
        and a recommendation
+     - A comment that @mentions who should answer can point to the item, but never
+       replaces it
      - Propose a change of the text in suggestion mode
-  2. Link it from GitHub: one line in the issue, with the link to the Gdoc heading or
-     comment, and no discussion
-  3. Answer it in the comment thread
+  2. Link it from GitHub: one line in the issue, with the link to the Gdoc heading,
+     and no discussion
+  3. Answer it under its item in the list
   4. Decide: a "Decided" bullet under the experiment, with who decided and when, then
-     resolve the thread
+     resolve its comment thread, if any
   5. Record it in the repo: the entry of `progress.md` for the PR that acts on it
      links to the decision, and a change of scope goes in the plan
 - Do not write code that depends on an open research question
-- When an answer comes on GitHub or in a meeting, reply in the Gdoc thread with the
-  answer and its link, record the decision, and resolve the thread
+- When an answer comes on GitHub or in a meeting, add the answer and its link under
+  the item, record the decision, and resolve its comment thread, if any
 - An AI agent can draft the questions and the text of the Gdoc, but a human posts
   them; an agent never answers a research question, accepts a suggestion, or resolves
   a thread
